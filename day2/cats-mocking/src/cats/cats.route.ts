@@ -3,7 +3,7 @@ import { Cat } from "./cats.model";
 
 const router = Router();
 
-//* READ 고양이 전체 데이터 조회
+//* READ 고양이 전체 데이터 조회 -> GET
 router.get("/cats", (req, res) => {
   try {
     const cats = Cat;
@@ -15,7 +15,7 @@ router.get("/cats", (req, res) => {
   }
 });
 
-//* READ 특정 고양이 데이터 조회
+//* READ 특정 고양이 데이터 조회 -> GET
 router.get("/cats/:id", (req, res) => {
   try {
     const { id } = req.params;
@@ -28,7 +28,7 @@ router.get("/cats/:id", (req, res) => {
   }
 });
 
-//* CREATE 새로운 고양이 추가
+//* CREATE 새로운 고양이 추가 -> POST
 router.post("/cats", (req, res) => {
   try {
     const data = req.body;
@@ -36,6 +36,61 @@ router.post("/cats", (req, res) => {
     Cat.push(data);
 
     res.status(201).send({ sucess: true, data: { data } });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).send({ success: false, error: error.message });
+  }
+});
+
+//* UPDATE 고양이 데이터 업데이트 -> PUT
+router.put("/cats/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    let result;
+    Cat.forEach((cat) => {
+      if (cat.id === id) {
+        cat = data;
+        result = cat;
+      }
+    });
+
+    res.send({ success: true, data: { cat: result } });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).send({ success: false, error: error.message });
+  }
+});
+
+//* UPDATE 고양이 데이터 부분적으로 업데이트 -> PATCH
+router.patch("/cats/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    let result;
+    Cat.forEach((cat) => {
+      if (cat.id === id) {
+        cat = { ...cat, ...data };
+        result = cat;
+      }
+    });
+
+    res.send({ success: true, data: { cat: result } });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).send({ success: false, error: error.message });
+  }
+});
+
+//* DELETE 고양이 데이터 삭제 -> DELETE
+router.delete("/cats/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const newCat = Cat.filter((cat) => cat.id !== id);
+
+    res.send({ success: true, data: { newCat } });
   } catch (error: any) {
     console.error(error);
     res.status(500).send({ success: false, error: error.message });
