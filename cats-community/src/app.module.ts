@@ -6,6 +6,7 @@ import { CatsModule } from './cats/cats.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './common/middlewares/logger/logger.middleware';
 import { AuthModule } from './auth/auth.module';
+import { CommentsModule } from './comments/comments.module';
 import mongoose from 'mongoose';
 
 console.log(process.env.MONGO_URL);
@@ -18,6 +19,7 @@ console.log(process.env.MONGO_URL);
       useUnifiedTopology: true,
     }),
     AuthModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

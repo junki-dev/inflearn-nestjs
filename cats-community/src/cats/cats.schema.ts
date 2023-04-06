@@ -1,3 +1,4 @@
+import { Comments } from './../comments/comments.schema';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
@@ -48,16 +49,31 @@ export class Cat extends Document {
     name: string;
     imgUrl: string;
   }; //* virtual readonly data
+
+  readonly comments: Comments[];
 }
 
-export const CatSchema = SchemaFactory.createForClass(Cat);
+const _CatSchema = SchemaFactory.createForClass(Cat);
 
 //* password가 응답데이터로 보여지면 안되기 때문에 사용자에게만 보여지도록 virtual(readOnlyData) 처리할 수 있다.
-CatSchema.virtual('readOnlyData').get(function (this: Cat) {
+_CatSchema.virtual('readOnlyData').get(function (this: Cat) {
   return {
     id: this.id,
     email: this.email,
     name: this.name,
     imgUrl: this.imgUrl,
+    comments: this.comments,
   };
 });
+
+_CatSchema.virtual('commentList', {
+  ref: 'comments',
+  localField: '_id',
+  foreignField: 'info',
+});
+
+_CatSchema.set('toObject', { virtuals: true });
+
+_CatSchema.set('toJSON', { virtuals: true });
+
+export const CatSchema = _CatSchema;
